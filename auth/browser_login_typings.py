@@ -1,13 +1,15 @@
 """type casting for browser login script"""
+from typing import TypedDict, Callable, NotRequired, List
 from playwright.sync_api import Page
-from typing import TypedDict, Callable, NotRequired
 
 
 class UserCredentials(TypedDict):
     """user credentials"""
+    name: str
     email: str
     password: str
     preset_action: NotRequired[Callable[[Page, str, str], None]]
+    collect_headers: List[str]
 
 
 class TwitterDetails(UserCredentials):

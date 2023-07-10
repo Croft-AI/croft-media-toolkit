@@ -1,6 +1,7 @@
 """opens browser instance in playwright to log in and access auth keys, cookies"""
-from auth.browser_login_typings import TwitterDetails
 from playwright.sync_api import sync_playwright
+from auth.browser_login_typings import TwitterDetails
+from auth.browser_network_scanner import scan_networking
 
 
 def access_login_page(url: str, site_details: TwitterDetails) -> object:
@@ -10,6 +11,7 @@ def access_login_page(url: str, site_details: TwitterDetails) -> object:
         browser = playwright.chromium.launch(headless=False, slow_mo=300)
         context = browser.new_context()
         page = context.new_page()
+        scan_networking(page, site_details)
         page.goto(url)
         # logs into account
         if "preset_action" in site_details:
@@ -21,6 +23,9 @@ def access_login_page(url: str, site_details: TwitterDetails) -> object:
             page.locator(site_details["password_input_selector"]).fill(
                 site_details["password"])
             page.press("body", "Enter")
+
+        context.close()
+        browser.close()
 
 
 if __name__ == "__main__":
