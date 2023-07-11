@@ -3,6 +3,8 @@ import json
 from playwright.sync_api import Page, Request
 from auth.browser_login_typings import TwitterDetails
 
+MEDIA_SECRETS_FOLDER: str = "media_secrets"
+
 
 def scan_networking(page: Page, site_details: TwitterDetails) -> None:
     """scan outgoing network and their details"""
@@ -14,13 +16,15 @@ def get_network_content(request: Request, site_details: TwitterDetails) -> None:
     """gets headers if all headers present"""
     headers = site_details["collect_headers"]
     request_headers = request.all_headers()
+    # print(request_headers)
     total_header_count = len(
         [header for header in headers if header in request_headers])
     if total_header_count == len(headers):
         header_object = {}
         for header in headers:
             header_object[header] = request_headers[header]
-        write_to_json(site_details["name"], "media_secrets", header_object)
+        write_to_json(site_details["name"],
+                      MEDIA_SECRETS_FOLDER, header_object)
 
 
 def write_to_json(name: str, secret_folder: str, header_object: object) -> None:

@@ -8,7 +8,7 @@ def access_login_page(url: str, site_details: TwitterDetails) -> object:
     """opens up headless browser to url login"""
     with sync_playwright() as playwright:
         # opens up browser to page
-        browser = playwright.chromium.launch(headless=False, slow_mo=300)
+        browser = playwright.chromium.launch(headless=False)
         context = browser.new_context()
         page = context.new_page()
         scan_networking(page, site_details)

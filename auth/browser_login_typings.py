@@ -16,3 +16,5 @@ class TwitterDetails(UserCredentials):
     """twitter login input selector details"""
     email_input_selector: str
     password_input_selector: str
+
+# class TikTokDetails(UserCredentials):
