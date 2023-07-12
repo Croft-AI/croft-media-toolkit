@@ -1,3 +1,4 @@
+"""handles twitter searches"""
 import json
 from typing import TypedDict, NotRequired, List
 from urllib.parse import quote
