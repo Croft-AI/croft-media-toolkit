@@ -1,0 +1,48 @@
+import json
+import asyncio
+from telethon.sessions import StringSession
+from telethon.sync import TelegramClient, events
+
+# from tele_helpers.telethon_auth_helper import save_tele_as_string_session
+
+
+async def save_tele_as_string_session() -> None:
+    """saves telegram login as string session"""
+    TELEGRAM_API_ID: int = int(input("Telegram API ID Key: "))
+    TELEGRAM_API_HASH: str = input("Telegram API Hash Key: ")
+    async with TelegramClient(StringSession(None), TELEGRAM_API_ID, TELEGRAM_API_HASH) as client:
+        TELEGRAM_STRING_SESSION = client.session.save()
+        # await client.send_message("me", "Hello Test")
+    with open("./media_secrets/telegram.json", "w", encoding="utf-8") as json_file:
+        json.dump({"TELEGRAM_API_HASH": TELEGRAM_API_HASH,
+                  "TELEGRAM_API_ID": TELEGRAM_API_ID, "TELEGRAM_STRING_SESSION": TELEGRAM_STRING_SESSION}, json_file)
+
+try:
+    with open("./media_secrets/telegram.json", "r", encoding="utf-8") as json_file:
+        TELEGRAM_SECRETS = json.load(json_file)
+        TELEGRAM_API_HASH = TELEGRAM_SECRETS["TELEGRAM_API_HASH"]
+        TELEGRAM_API_ID = TELEGRAM_SECRETS["TELEGRAM_API_ID"]
+        TELEGRAM_STRING_SESSION = TELEGRAM_SECRETS["TELEGRAM_STRING_SESSION"]
+except FileNotFoundError:
+    asyncio.run(save_tele_as_string_session())
+
+client = TelegramClient(StringSession(
+    TELEGRAM_STRING_SESSION), TELEGRAM_API_ID, TELEGRAM_API_HASH)
+
+
+SELECTED_CHATS: tuple = ()
+
+
+@client.on(events.NewMessage(outgoing=False, chats=SELECTED_CHATS))
+async def new_telegram_message(event):
+    """handles incoming messages"""
+    sender = await event.get_sender()
+    print(f"""
+    text: {event.raw_text}
+    sender: {sender.username}
+    """)
+
+if __name__ == "__main__":
+    client.start()
+    client.run_until_disconnected()
+    #     pass
