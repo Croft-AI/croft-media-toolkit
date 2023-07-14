@@ -1,9 +1,13 @@
+"""handles telegram handler"""
 import json
 import asyncio
 from telethon.sessions import StringSession
 from telethon.sync import TelegramClient, events
+# from configurations.telegram_configs import TELEGRAM_SAVE_PHOTOS, TELEGRAM_SAVE_FILES
 
 # from tele_helpers.telethon_auth_helper import save_tele_as_string_session
+
+MEDIA_FOLDER_PATH = "./media_files/"
 
 
 async def save_tele_as_string_session() -> None:
@@ -30,17 +34,28 @@ client = TelegramClient(StringSession(
     TELEGRAM_STRING_SESSION), TELEGRAM_API_ID, TELEGRAM_API_HASH)
 
 
-SELECTED_CHATS: tuple = ()
+SELECTED_CHATS: tuple = ("me")
 
 
-@client.on(events.NewMessage(outgoing=False, chats=SELECTED_CHATS))
+async def telegram_media_handler(event) -> str:
+    """handles incoming media"""
+    if not (event.photo and True):
+        return
+    if not (event.file and True):
+        return
+    return await event.download_media(file=MEDIA_FOLDER_PATH)
+
+
+@client.on(events.NewMessage(outgoing=True, chats=SELECTED_CHATS))
 async def new_telegram_message(event):
     """handles incoming messages"""
     sender = await event.get_sender()
-    print(f"""
-    text: {event.raw_text}
-    sender: {sender.username}
-    """)
+    saved_path = await telegram_media_handler(event)
+    message_object: object = {"text": event.raw_text,
+                              "source": sender.username,
+                              "media": saved_path}
+    print(message_object)
+
 
 if __name__ == "__main__":
     client.start()
