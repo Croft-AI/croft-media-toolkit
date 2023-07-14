@@ -1,8 +1,15 @@
 """handles tiktok searches"""
 import json
-from typing import List
+from typing import List, TypedDict
 from urllib.parse import quote
 from requests import get, Response
+
+
+class TikTokDownloadRequest(TypedDict):
+    """headers required to download tiktok video"""
+    referer: str
+    cookie: str
+    user_agent: str
 
 
 with open("./media_secrets/tiktok.json", "r", encoding="utf-8") as json_file:

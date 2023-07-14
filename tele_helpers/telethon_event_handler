@@ -3,7 +3,7 @@ import json
 import asyncio
 from telethon.sessions import StringSession
 from telethon.sync import TelegramClient, events
-# from configurations.telegram_configs import TELEGRAM_SAVE_PHOTOS, TELEGRAM_SAVE_FILES
+from configurations.telegram_configs import TELEGRAM_SAVE_PHOTOS, TELEGRAM_SAVE_FILES
 
 # from tele_helpers.telethon_auth_helper import save_tele_as_string_session
 
@@ -39,9 +39,9 @@ SELECTED_CHATS: tuple = ("me")
 
 async def telegram_media_handler(event) -> str:
     """handles incoming media"""
-    if not (event.photo and True):
+    if not (event.photo and TELEGRAM_SAVE_PHOTOS):
         return
-    if not (event.file and True):
+    if not (event.file and TELEGRAM_SAVE_FILES):
         return
     return await event.download_media(file=MEDIA_FOLDER_PATH)
 
